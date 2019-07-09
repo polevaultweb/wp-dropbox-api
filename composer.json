@@ -1,0 +1,16 @@
+{
+  "name": "polevaultweb/wp-dropbox-api",
+  "description": "Simple WordPress library for using the Dropbox API v2",
+  "license": "GPL-2.0+",
+  "authors": [
+    {
+      "name": "Iain Poulson",
+      "homepage": "https://polevaultweb.com/"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "Polevaultweb\\WPDropboxAPI\\": "src/"
+    }
+  }
+}
