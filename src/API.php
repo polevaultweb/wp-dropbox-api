@@ -47,6 +47,91 @@ class API {
 		return $this->post( $endpoint, $args );
 	}
 
+	/**
+	 * @param string $file_data
+	 * @param bool   $close
+	 *
+	 * @return bool|UploadSessionCursor
+	 */
+	public function upload_session_start( $file_data, $close = false ) {
+		$endpoint = 'files/upload_session/start';
+
+		$arguments = compact( 'close' );
+
+		$args = array(
+			'headers' => array(
+				'Content-Type'    => 'application/octet-stream',
+				'Dropbox-API-Arg' => json_encode( $arguments ),
+			),
+			'body'    => $file_data,
+			'timeout' => 60,
+		);
+
+		$response = $this->post( $endpoint, $args );
+
+		if ( empty( $response ) || ! isset( $response->session_id ) ) {
+			return false;
+		}
+
+		return new UploadSessionCursor( $response->session_id, strlen( $file_data ) );
+	}
+
+	/**
+	 * @param UploadSessionCursor $cursor
+	 * @param string              $file_data
+	 * @param bool                $close
+	 *
+	 * @return bool|mixed
+	 */
+	public function upload_session_append( $cursor, $file_data, $close = false ) {
+		$endpoint = 'files/upload_session/append';
+
+		$arguments = compact( 'cursor', 'close' );
+
+		$args = array(
+			'headers' => array(
+				'Content-Type'    => 'application/octet-stream',
+				'Dropbox-API-Arg' => json_encode( $arguments ),
+			),
+			'body'    => $file_data,
+			'timeout' => 60,
+		);
+
+		$response = $this->post( $endpoint, $args );
+
+		$cursor->offset += strlen( $file_data );
+
+		return $cursor;
+	}
+
+	/**
+	 * @param UploadSessionCursor $cursor
+	 * @param string              $path
+	 * @param string              $mode
+	 * @param bool                $autorename
+	 * @param bool                $mute
+	 *
+	 * @return bool
+	 */
+	public function upload_session_finish( $cursor, $path, $mode = 'add', $autorename = false, $mute = false ) {
+		$endpoint = 'files/upload_session/finish';
+
+		$arguments           = compact( 'cursor' );
+		$arguments['commit'] = compact( 'path', 'mode', 'autorename', 'mute' );
+
+		$args = array(
+			'headers' => array(
+				'Content-Type'    => 'application/octet-stream',
+				'Dropbox-API-Arg' => json_encode( $arguments ),
+			),
+			'timeout' => 60,
+		);
+
+		$response = $this->post( $endpoint, $args );
+
+		return $response;
+	}
+
 	public function get_url( $path ) {
 		$endpoint = 'files/get_temporary_link';
 
