@@ -84,7 +84,7 @@ class API {
 	 * @return bool|mixed
 	 */
 	public function upload_session_append( $cursor, $file_data, $close = false ) {
-		$endpoint = 'files/upload_session/append';
+		$endpoint = 'files/upload_session/append_v2';
 
 		$arguments = compact( 'cursor', 'close' );
 
