@@ -48,6 +48,26 @@ class API {
 	}
 
 	/**
+	 * @param $path
+	 *
+	 * @return bool|mixed
+	 */
+	public function delete_file( $path ) {
+		$endpoint = 'files/delete_v2';
+
+		$path = '/' . ltrim( $path, '/' );
+
+		$data = array( 'path' => $path );
+
+		$args = array(
+			'headers' => array( 'Content-Type' => 'application/json', ),
+			'body'    => json_encode( $data ),
+		);
+
+		return $this->post( $endpoint, $args, false );
+	}
+
+	/**
 	 * @param string $file_data
 	 * @param bool   $close
 	 *
